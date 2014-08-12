@@ -1,26 +1,32 @@
 use Moops;
 use Ape;
 
-class HomoHabilis  {
+class HomoHabilis extends Ape {
   has 'grunt' => (
-	is => 'rw',
-	isa => 'Bool',
-	predicate => 'can_grunt',
+      is => 'rw',
+      isa => 'Bool',
+      default => 1,
+      predicate => 'can_grunt',
   );
 
-  # private
-  has 'rage' => ( is => 'rwp', isa => 'Bool', default=>1 );
-  has 'xp' => ( is => 'rwp', isa => 'Int', default=>100 );
+  # private - well I hate calling anything private in default
+  # moose, as it's not.
+  # you can still call $object->_rage externally
+  # bet there's a moosex for that which checks caller()
+  has '_rage' => ( is => 'rw', isa => 'Bool', default=>1 );
+
+  # public - well everything is
+  has 'xp' => ( is => 'rw', isa => 'Int', default=>100 );
 
   method adjust_xp( Int $value ) {
-    $self->set_xp( $self->xp + $value );
+      $self->xp( $self->xp + $value );
   } 
 
-  method hit_noisy_ape( Ape $target  where {$_->can_grunt} ) {
-    if ($self->get_rate) {
-      $target->adjust_xp( -10 );
-      $self->adjust_xp( +10 );
-    }
+  method hit_noisy_ape( HomoHabilis $target  where {$_->can_grunt} ) {
+      if ($self->_rage) {
+          $target->adjust_xp( -10 );
+          $self->adjust_xp( +10 );
+      }
   }  
 }
 

@@ -3,19 +3,17 @@ use Moose;
 use MooseX::FollowPBP;
 use DateTime;
 extends 'Ape';
-
 use MooseX::Method::Signatures;
+use CustomTypes ':all';
 
-method mind_meld_with(Person $subject, Int $depth) {
-  $self->think_of( $subject->get_thought );
-}
+has 'engagement_anniversary' => (
+    is => 'rw', isa => 'CustomTypes::LifeEventDate', coerce => 1 );
 
 has 'thought' => ( is => 'rw', isa => 'Str', default => 'doh' );
 
 has 'breath_count' => ( is => 'rw',
 			isa => 'Int',
 			default => 0 );
-
 
 has 'name' => ( is      => 'ro',          #read only
                 isa     => 'Str',         #string
@@ -29,6 +27,10 @@ has 'year_of_birth' => ( is => 'rw', isa => 'Int',
 # consume role
 with 'Role::BreathLogger';
 
+method mind_meld_with(Person $subject, Int $depth) {
+  $self->think_of( $subject->get_thought );
+}
+
 sub breath {
   my $self = shift;
   $self->get_logger->debug("Wheeze");
@@ -41,8 +43,11 @@ around 'think_of' => sub {
   my $args = shift;
   $self->get_logger->debug("Start thinking\n");
   my @thoughts = map{ $_ . " is great" } @$args;
-  $self->$target_method(\@thoughts);
+  my $result = $self->$target_method(\@thoughts);
   $self->get_logger->debug("Done thinking\n");
+  
+  $result = 'censored' if $result eq 'poo';
+  return $result;
 };
 
 sub think_of {
@@ -51,9 +56,8 @@ sub think_of {
   for (@$thoughts) {
     $self->get_logger->debug("Thinking of $_\n");
   }
+  return "poo";
 }
-
-
 
 # derive birth year from age
 sub _build_year_of_birth {
@@ -62,7 +66,6 @@ sub _build_year_of_birth {
   DateTime->now()->subtract(
     years => $self->get_age )->year;
 }
-
 
 no Moose;
 1;
