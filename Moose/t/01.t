@@ -11,9 +11,12 @@ throws_ok
 	{ Person->new({ name=>12, age=>'Raf', peers=>['apple'] }) }
         qr/Validation failed for 'Int' with value \"?Raf\"?/,
 	'Should barf on illegal types';
-
 ok($person->breath, "Testing breathing");
 
-$person->think_of([qw(space cheese trek)]);
+is( $person->think_of([qw(space cheese trek)]), 'censored', 'Thoughts filtered' );
+
+$person->set_engagement_anniversary( 1407598440 );
+is( $person->get_engagement_anniversary, '2014-08-09T15:34:00',
+    'Engage!');
 
 done_testing;
