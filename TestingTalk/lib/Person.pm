@@ -7,9 +7,9 @@ has 'name' => ( is      => 'ro',
                 isa     => 'Str',
                 default => 'John Doh', );
 
-has 'cats' => ( is      => 'ro',
+has 'cats' => ( is     => 'ro',
                isa     => 'Bool',
-               default => 'John Doh',
+               default => 0,
                reader  => 'owns_cat');
 
 sub is_happy {
