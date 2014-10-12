@@ -12,8 +12,7 @@ has 'cats' => ( is     => 'ro',
                default => 0,
                reader  => 'owns_cat');
 
-sub is_happy {
-    my $self = shift;
+method is_happy(){
     $self->owns_cat;
 }
 
