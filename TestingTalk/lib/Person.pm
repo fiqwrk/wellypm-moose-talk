@@ -13,7 +13,7 @@ has 'cats' => ( is     => 'rw',
                predicate  => 'owns_cat');
 
 method is_happy(){
-    $self->owns_cat;
+    $self->owns_cat && ! grep{ $_->is_grumpy } @{$self->get_cats} ;
 }
 
 method owns_cat_named( Str $cat ){
