@@ -8,12 +8,17 @@ has 'name' => ( is      => 'ro',
                 isa     => 'Str',
                 default => 'John Doh', );
 
-has 'cats' => ( is     => 'ro',
+has 'cats' => ( is     => 'rw',
                isa     => 'ArrayRef[Cat]',
                predicate  => 'owns_cat');
 
 method is_happy(){
     $self->owns_cat;
+}
+
+method owns_cat_named( Str $cat ){
+    return unless $self->cats;
+    return grep{ $_->get_name eq $cat } @{$self->cats};
 }
 
 no Moose;
